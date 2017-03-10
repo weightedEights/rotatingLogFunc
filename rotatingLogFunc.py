@@ -11,19 +11,23 @@ implementing the rotating log file handler in other projects.
 from datetime import datetime
 import os
 import logging
+import time
+from logging.handlers import TimedRotatingFileHandler
 
 
 def main():
 
     printHeader()
 
-    # set the log file directory
-    logFileDir = os.getcwd()
+    # setup log file and naming convention
+    logFile = "counterLog.log"
+    dateTag = ""
 
-    logFile = logFileSetup(logFileDir)
+    # setup rotating log handler
+    logger= timeRotatingLogSetup(logFile)
 
-    rotatingLog(logFile)
-
+    # begin "data acq" and logging
+    writeLog(logger)
 
 
 def printHeader():
@@ -33,14 +37,24 @@ def printHeader():
     print("---------------------------------")
 
 
-def logFileSetup(fileDir):
+def timeRotatingLogSetup(path):
 
-    pass
+    logger = logging.getLogger("Rotating Log")
+    logger.setLevel(logging.INFO)
+
+    handler = TimedRotatingFileHandler(path, "m", 1)
+    logger.addHandler(handler)
+
+    return logger
 
 
-def rotatingLog(logFile):
+def writeLog(logger):
 
-    pass
+    logger.handler[0].doRollover()
+
+    while(1):
+        logger.info(str(datetime.now()))
+        time.sleep(6)
 
 
 if __name__ == '__main__':
