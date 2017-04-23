@@ -12,7 +12,7 @@ from datetime import datetime
 import os
 import logging
 import time
-from logging.handlers import TimedRotatingFileHandler
+from logging.handlers import TimedRotatingFileHandler as TRFH
 
 
 def main():
@@ -20,11 +20,11 @@ def main():
     printHeader()
 
     # setup log file and naming convention
-    logFile = "counterLog.log"
+    logFile = "counterLog.csv"
     dateTag = ""
 
     # setup rotating log handler
-    logger= timeRotatingLogSetup(logFile)
+    logger = timeRotatingLogSetup(logFile)
 
     # begin "data acq" and logging
     writeLog(logger)
@@ -39,10 +39,11 @@ def printHeader():
 
 def timeRotatingLogSetup(path):
 
-    logger = logging.getLogger("Rotating Log")
+    logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
 
-    handler = TimedRotatingFileHandler(path, "m", 1)
+    # when: s=sec, m=min, h=hour, d=day, W0-W6=weekday (0 = monday), midnight=midnight
+    handler = TRFH(path, when="m", interval=1, backupCount=0, encoding="utf8", utc=True)
     logger.addHandler(handler)
 
     return logger
@@ -50,10 +51,11 @@ def timeRotatingLogSetup(path):
 
 def writeLog(logger):
 
-    logger.handler[0].doRollover()
+    # logger.handler[0].doRollover()
+    # logger.doRollover()
 
     while(1):
-        logger.info(str(datetime.now()))
+        logger.info(str(datetime.now()) + ',' + "poop")
         time.sleep(6)
 
 
